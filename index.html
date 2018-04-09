@@ -103,7 +103,7 @@
 <p>所以把cp2代入上面，再把cp1代入上上面就得到：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(...args) =&gt; a(b(c(...args)))</span><br></pre></td></tr></table></figure></p>
 <hr>
 <p>所以我们理解了，compose函数，其实是一个非常常用的抽象。它把传入其中的函数，按照从右到左的顺序按序执行，除了最右边的可以接收多个参数，剩下的函数都只能接收单个参数。<strong>也就是说compose把参数转化成一个连续的函数变换。</strong></p>
-<p>只是感觉执行顺序有待商榷，我觉得compose从左到右的顺序可能会好些，毕竟先写的函数先执行，逻辑上可能较为通顺点。<br>    return funcs.reverse().reduce((a, b) =&gt; (…args) =&gt; a(b(…args)))</p>
+<p>只是感觉执行顺序有待商榷，我觉得compose从左到右的顺序可能会好些，毕竟先写的函数先执行，逻辑上可能较为通顺点。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> funcs.reverse().reduce(<span class="function">(<span class="params">a, b</span>) =&gt;</span> (...args) =&gt; a(b(...args)))</span><br></pre></td></tr></table></figure></p>
 <hr>
 <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>一个典型的应用场景是用echarts.js绘制图表。<br>比如我们经常会抽象出一个函数来生成echarts的option：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> stackLine = (&#123;</span><br><span class="line">  dataset,</span><br><span class="line">  title,</span><br><span class="line">  yAxisName,</span><br><span class="line">  stackName,</span><br><span class="line">  xAxisData</span><br><span class="line">&#125;) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> option = &#123;</span><br><span class="line">    ...someOptionHere</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">return</span> option;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -119,7 +119,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/09/阅读redux源码-compose-js/" data-id="cjfs022xh00029gs690nj40j9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/09/阅读redux源码-compose-js/" data-id="cjfs0uwsb0002bcs6grqvy7r4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,7 +155,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/09/test-my-site/" data-id="cjfs022xa00019gs6i9yo171u" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/09/test-my-site/" data-id="cjfs0uws30001bcs6y5eu11na" class="article-share-link">Share</a>
       
       
     </footer>
@@ -200,7 +200,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/09/hello-world/" data-id="cjfs022x300009gs6e7nzaws9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/09/hello-world/" data-id="cjfs0uwrv0000bcs6nhjfdcbu" class="article-share-link">Share</a>
       
       
     </footer>
