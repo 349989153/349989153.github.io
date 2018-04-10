@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>阅读redux源码--createStore.js | 陆扬的个人博客</title><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"><script src="/js/third-party/jquery.min.js">           </script><script src="/js/third-party/velocity.min.js">           </script><script src="/js/third-party/velocity.ui.min.js">           </script><link rel="icon" href="/img/favicon.ico"></head><body><nav id="nav-bar"><nav class="clear-fix" id="nav-container"><div class="pull-left" id="page-home"><a href="/">陆扬的个人博客</a></div><i class="fa fa-bars pull-right" id="toggle-nav" aria-hidden="true"></i><ul class="pull-right" id="navs"><li><a class="nav" href="/">Home</a></li><li><a class="nav" href="/about">About</a></li><li><a class="nav" href="/tags">Tags</a></li><li><a class="nav" href="/categories">Categories</a></li></ul></nav></nav><header id="header-info"><div id="header-container"><div id="site-info"><div id="terminal-pl"><div id="top-bar"><ul id="control"><li class="btn"></li><li class="btn"></li><li class="btn"></li></ul><div id="file-path"><i class="fa fa-folder folder-ic" aria-hidden="true"></i> 349989153 10 X 10</div></div><div id="code-pl">Last updated: 2018-04-10<br>349989153:~ Desktop$ <span class="code-pl-input">node 阅读redux源码--createStore.js.js</span><br><br>> Post.tags <br><a class="tag" href="#js"><span>js</span></a><a class="tag" href="#redux"><span>redux</span></a><a class="tag" href="#源码"><span>源码</span></a><br><br>> Post.prev <br><a href="/2018/04/10/阅读redux源码-combineReducer-js/"><span class="answer">阅读redux源码--combineReducer.js</span></a><br><br>> Post.next <br><a href="/2018/04/10/阅读redux源码-bindActionCreators-js/"><span class="answer">阅读redux源码--bindActionCreators.js</span></a></div></div></div></div></header><div id="content-outer"><div id="content-inner"><article id="post"><a class="article-title">阅读redux源码--createStore.js</a><time class="article-date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-04-10</time><p>createStore是redux的2大核心之一，它创建了一个Redux store，并把state隐藏在闭包函数之中。</p>
+<a id="more"></a>
+<hr>
+<h2 id="createStore-js"><a href="#createStore-js" class="headerlink" title="createStore.js"></a>createStore.js</h2><p>接收3个参数：reducer，preloadedState，enhancer，返回一个object，概念上是Redux store，有dispatch，subscribe，getState，replaceReducer</p>
+<hr>
+<p>首先是各种检查，保证代码能够顺利运行，比如：</p>
+<ul>
+<li>如果第二个参数preloadedState是function，并且第三个参数enhancer不存在的话，那么挪一下，把第二个参数的function赋给enhancer，然后把preloadedState置为undefined。这是为了函数能够接收断续的参数，而不必把不需要的参数填上undefined。</li>
+<li>如果有enhancer，那么enhancer必须为function，并且return enhancer(createStore)(reducer, preloadedState)。这说明2件事：1.enhancer加强的是createStore。2.enhancer接收一个createStore函数，返回一个和createStore差不多的函数。</li>
+<li>如果reducer不是function，报错.</li>
+</ul>
+<hr>
+<p>然后声明一些变量：</p>
+<ul>
+<li><code>currentReducer</code>：入参reducer</li>
+<li><code>currentState</code>：入参preloadedState</li>
+<li><code>currentListeners</code>： 一个空数组</li>
+<li><code>nextListeners</code>：currentListeners</li>
+<li><code>isDispatching</code>： false</li>
+</ul>
+<hr>
+<p>然后是function getState：如果不是isDispatching，返回currentState。</p>
+<hr>
+<p>然后是function subscribe，接受一个入参listener。listener必须为function，所以先判断报错。<br>置isSubscribed为true，并且保证currentListeners和nextListeners不是同一个引用，再往nextListeners里push(listener).<br>返回一个函数，这个函数执行后，能unsubscribe这个listener。<br><strong>一个有意思的地方是，数组的indexOf方法可以对函数使用。</strong> [].indexOf(listener)能够拿到listener在数组里的index。</p>
+<p>然后是function subscribe，接受一个入参listener。subscribe就做了一件事情，就是把入参listener push到nextListeners里面，并且返回一个unsubscribe函数。</p>
+<hr>
+<p>然后是function dispatch，接受一个入参action，action必须是普通object，并且必须有type属性，并且当前不能是isDispatching。<br>接着，把isDispatching置为true，以currentState和action为参数，用currentReducer生成新的state，再更新到currentState。<br>然后把nextListeners赋给currentListeners，每个listener都执行一下。<br>最后把action返回来。</p>
+<hr>
+<p>然后是function replaceReducer，接收一个入参nextReducer，把currentReducer用nextReducer替换了，然后dispatch一个内置的action，只有type。这个dispatch会用nextReducer生成新的state，并且把currentListener都执行一遍。</p>
+<hr>
+<p>然后是function observable，没有入参，返回一个object。有2个属性，一个subscribe，一个$$observable。subscribe接收一个参数observer，它是个object，并且有next属性，用来对当前state进行处理。调用subscribe会执行一次observer方法，然后把observer用前面的subscribe方法注册到currentListener上面，这样在每次dispatch的时候，都会对currentState执行observer.next</p>
+</article><nav id="pagination"><div class="pagination clear-fix"><div class="page-prev pull-left"><a href="/2018/04/10/阅读redux源码-combineReducer-js/"><i class="fa fa-chevron-left"> </i><span>阅读redux源码--combineReducer.js</span></a></div><div class="page-next pull-right"><a href="/2018/04/10/阅读redux源码-bindActionCreators-js/"><span>阅读redux源码--bindActionCreators.js</span><i class="fa fa-chevron-right"></i></a></div></div></nav></div></div><footer><div id="footer-inner"><div class="social-icons"></div><p class="design-info">power by <a href="https://hexo.io" target="_blank">Hexo</a> | theme <a href="https://github.com/lazysheep666/terminal_theme" target="_blank">Teminal</a></p><p class="copyright">Copyright © 349989153 Blog 2018</p></div></footer><script src="/js/nav.js"></script><script src="/js/scroll.js"></script><script src="/js/index.js"></script></body></html>
